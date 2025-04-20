@@ -123,11 +123,17 @@ watch(localArrivalModelValue, (newValue) => {
 $input_gap: 4px;
 $icon_offset: 8px;
 $icon_size: 24px;
-$left_limit: ($icon_size - $input_gap + 1.5px) * 0.5 / $icon_size * 100%;
-$left_inner_limit: ($icon_size - $input_gap - 0.5px) * 0.5 / $icon_size * 100%;
-$right_limit: 100% - ($icon_size - $input_gap + 0.5px) * 0.5 / $icon_size * 100%;
-$right_inner_limit: 100% - ($icon_size - $input_gap - 0.5px) * 0.5 / $icon_size *
-  100%;
+$left_limit: calc(($icon_size - $input_gap + 1.5px) * 0.5 / $icon_size * 100%);
+$left_inner_limit: calc(
+  ($icon_size - $input_gap - 0.5px) * 0.5 / $icon_size * 100%
+);
+$right_limit: calc(
+  100% - ($icon_size - $input_gap + 0.5px) * 0.5 / $icon_size * 100%
+);
+$right_inner_limit: calc(
+  100% - ($icon_size - $input_gap - 0.5px) * 0.5 / $icon_size * 100%
+);
+
 .locations {
   position: relative;
   gap: $input_gap;
