@@ -13,6 +13,7 @@ export interface User{
     update?: string
 }
 
+type ProposeStatus = 'pending' | 'accpeted' | 'completed' | 'cancelled'
 export interface Propose{
     id?: string,
     proponent: string,
@@ -21,6 +22,7 @@ export interface Propose{
     departure: string,
     headcount: number
     price?: number
+    status: ProposeStatus
     appendix?: string
     created?: string,
     updated?: string,
@@ -28,7 +30,19 @@ export interface Propose{
         proponent: User
     }
 }
-
+export interface Offer {
+    id?: string;
+    propose: string;
+    driver: string;
+    price: number;
+    appendix?: string;
+    created?: string;
+    updated?: string;
+    expand?: {
+      propose: Propose;
+      driver: User;
+    };
+  }
 const pb = new PocketBase('http://localhost:8090')
 
 export const usePocketbaseStore = defineStore('pocketbase', () => {
@@ -52,9 +66,35 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         if(!user || !user.avatar) return defaultAvatar
         return `${pb.baseURL}/api/files/users/${user.id}/${user.avatar}`
     }
+
+    const fetchUserProposes = async (id: string, page: number) : Promise<Propose[]> => {
+        return await pb.collection("Propose").getFullList({
+            filter: `proponent = "${id}"`,
+            sort: '-created',
+            page: page,
+        })
+    }
+    const fetchProposeOffers = async (ids: string[]) : Promise<Offer[]>  => {
+        return await pb.collection("Offer").getFullList({
+            filter: `${ids.map(id => `propose = "${id}"`).join(' || ')}`,
+            sort: '-created',
+            expand: 'driver,propose',
+        })
+    }
+
+    const acceptOffer = async (proposeId: string, offer: Offer) => {
+        const updatedPropose = await pb.collection("Propose").update(proposeId, {
+            status: 'accepted',
+            price: offer.price,
+        })
+
+    }
     
     return{
+        acceptOffer,
         fetchAvatarURL,
+        fetchUserProposes,
+        fetchProposeOffers,
         proposes,
         refreshProposes,
         createPropose,

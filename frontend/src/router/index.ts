@@ -6,13 +6,22 @@ const router = createRouter({
         {
             path: '/',
             name: 'home',
-            component: () => import('../views/Home.vue'),
+            component: () => import('@/views/Home.vue'),
         },
         {
-            path: '/proposes',
-            name: 'proposes',
-            component: () => import('../views/Proposes.vue'),
-        },
+            path: '/propose',
+            name: 'propose',
+            component: () => import('@/views/propose/index.vue'),
+        },{
+            path: '/feedback',
+            name: 'feedback',
+            component: () => import('@/views/Feedback.vue')
+        },{
+            path: '/propose/:id',
+            name: 'propose-detail',
+            component: () => import('@/views/propose/[id].vue'),
+            props: true,
+        }
 
     ]
 })

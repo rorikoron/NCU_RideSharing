@@ -8,8 +8,13 @@ const { refreshProposes } = usePocketbaseStore();
 const links = [
   {
     icon: "fa-solid fa-users",
-    text: "提議者一覽",
-    to: "/proposes",
+    text: "提案一覽",
+    to: "/propose",
+  },
+  {
+    icon: "fa-solid fa-comments-dollar",
+    text: "提案回覆",
+    to: "/feedback",
   },
 ];
 

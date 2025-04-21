@@ -1,26 +1,20 @@
 <script setup lang="ts">
 import { type Propose } from "../stores/pocketbase";
 import LocationsPath from "../components/LocationsPath.vue";
-const props = defineProps<{
-  propose: Propose;
-  avatarUrl: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    propose: Propose;
+    bordered?: boolean;
+  }>(),
+  {
+    bordered: true,
+  }
+);
 </script>
 
 <template>
-  <q-card class="fit q-pa-xs" flat bordered>
-    <q-item>
-      <q-item-section avatar>
-        <q-avatar size="md">
-          <q-img :src="avatarUrl" :ratio="1" fit="cover" alt="avatar" />
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{ propose.expand?.proponent.name }}</q-item-label>
-        <q-item-label>{{ propose.expand?.proponent.name }}</q-item-label>
-      </q-item-section>
-    </q-item>
-    <q-separator />
+  <q-card class="fit q-pa-xs col" flat :bordered="bordered">
+    <slot name="header" />
 
     <q-card-section class="q-col-gutter-y-md">
       <q-card-section

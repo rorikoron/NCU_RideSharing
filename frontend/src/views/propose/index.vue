@@ -2,6 +2,7 @@
 import { onMounted } from "vue";
 import { usePocketbaseStore } from "@/stores/pocketbase";
 import ProposeCard from "@/components/ProposeCard.vue";
+import UserSummary from "@/components/UserSummary.vue";
 
 const pb = usePocketbaseStore();
 
@@ -17,8 +18,11 @@ onMounted(async () => {
       v-for="propose in pb.proposes"
       :key="propose.id"
       :propose="propose"
-      :avatarUrl="pb.fetchAvatarURL(propose.expand?.proponent)"
     >
+      <template #header>
+        <UserSummary :user="propose.expand!.proponent" />
+        <q-separator />
+      </template>
       <!-- here should replace with authUser.is_driver -->
       <div v-if="true">
         <q-separator />
