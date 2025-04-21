@@ -33,7 +33,11 @@ const createPropose = async () => {
 };
 
 const date = new Date();
-const todayStr = date.toISOString().replace(/T/, " ").substring(0, 16);
+const date_timezone_taiwan = new Date(date.getTime() + 8 * 60 * 60 * 1000);
+const todayStr = date_timezone_taiwan
+  .toISOString()
+  .replace(/T/, " ")
+  .substring(0, 16);
 
 const formValue = ref<Propose>({
   // ATTENTION: here should implement the ID of user
