@@ -36,4 +36,5 @@ lerna-debug.log*
 /backend/pb_data/*.db-wal
 /backend/pb_data/*.db-shm
 /backend/pb_data/auxiliary.db
+/backend/pb_data/auxiliary.db-shm
 /backend/pb_data/*.auxiliary
