@@ -13,10 +13,11 @@ export interface User{
     update?: string
 }
 
-type ProposeStatus = 'pending' | 'accpeted' | 'completed' | 'cancelled'
+export type ProposeStatus = 'pending' | 'accepted' | 'completed' | 'cancelled'
 export interface Propose{
     id?: string,
     proponent: string,
+    offer: string,
     origin: string,
     arrival: string,
     departure: string,
@@ -35,7 +36,7 @@ export interface Offer {
     propose: string;
     driver: string;
     price: number;
-    appendix?: string;
+    appendix?: string
     created?: string;
     updated?: string;
     expand?: {
@@ -84,9 +85,11 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
 
     const acceptOffer = async (proposeId: string, offer: Offer) => {
         const updatedPropose = await pb.collection("Propose").update(proposeId, {
+            offer: offer.id,
             status: 'accepted',
             price: offer.price,
         })
+
 
     }
     
