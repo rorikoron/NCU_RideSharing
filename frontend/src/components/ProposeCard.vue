@@ -1,26 +1,20 @@
 <script setup lang="ts">
 import { type Propose } from "../stores/pocketbase";
 import LocationsPath from "../components/LocationsPath.vue";
-const props = defineProps<{
-  proponent: Propose;
-  avatarUrl: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    propose: Propose;
+    bordered?: boolean;
+  }>(),
+  {
+    bordered: true,
+  }
+);
 </script>
 
 <template>
-  <q-card class="fit q-pa-xs" flat bordered>
-    <q-item>
-      <q-item-section avatar>
-        <q-avatar size="md">
-          <q-img :src="avatarUrl" :ratio="1" fit="cover" alt="avatar" />
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{ proponent.expand?.proponent.name }}</q-item-label>
-        <q-item-label>{{ proponent.expand?.proponent.name }}</q-item-label>
-      </q-item-section>
-    </q-item>
-    <q-separator />
+  <q-card class="fit q-pa-xs col" flat :bordered="bordered">
+    <slot name="header" />
 
     <q-card-section class="q-col-gutter-y-md">
       <q-card-section
@@ -28,14 +22,14 @@ const props = defineProps<{
         horizontal
         style="height: 100px"
       >
-        <LocationsPath :locations="[proponent.origin, proponent.arrival]" />
+        <LocationsPath :locations="[propose.origin, propose.arrival]" />
       </q-card-section>
       <div class="q-col-gutter-x-sm">
         <span class="text-body2">
-          {{ proponent.departure.substring(5, 10).replace(/\-/g, " / ") }}
+          {{ propose.departure.substring(5, 10).replace(/\-/g, " / ") }}
         </span>
         <span class="text-body2">
-          {{ proponent.departure.substring(11, 16) }}
+          {{ propose.departure.substring(11, 16) }}
         </span>
       </div>
     </q-card-section>
@@ -48,11 +42,11 @@ const props = defineProps<{
         square
         class="q-mx-none"
         :ripple="false"
-        :label="proponent.headcount"
+        :label="propose.headcount"
       />
 
       <q-chip
-        v-if="proponent?.appendix"
+        v-if="propose?.appendix"
         size="md"
         class="cursor-pointer"
         :color="$q.dark.isActive ? 'active' : 'inactive'"
@@ -60,14 +54,9 @@ const props = defineProps<{
         :ripple="false"
         label="#備註"
       >
-        <q-tooltip>{{ proponent.appendix }}</q-tooltip>
+        <q-tooltip>{{ propose.appendix }}</q-tooltip>
       </q-chip>
     </q-card-section>
-
-    <q-separator />
-
-    <q-card-actions vertical>
-      <q-btn flat label="接單" />
-    </q-card-actions>
+    <slot />
   </q-card>
 </template>

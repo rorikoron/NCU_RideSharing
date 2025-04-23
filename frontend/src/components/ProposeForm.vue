@@ -44,6 +44,7 @@ const formValue = ref<Propose>({
   proponent: "748lod0038buwzd",
   origin: "",
   arrival: "",
+  status: "pending",
   headcount: 1,
   departure: todayStr,
 });
