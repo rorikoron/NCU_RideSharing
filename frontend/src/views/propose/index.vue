@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { usePocketbaseStore } from "@/stores/pocketbase";
+import { useQuasar } from "quasar";
 import ProposeCard from "@/components/ProposeCard.vue";
 import UserSummary from "@/components/UserSummary.vue";
+import OfferForm from "@/components/OfferForm.vue";
 
+const $q = useQuasar();
 const pb = usePocketbaseStore();
+const { refreshProposes } = pb;
+
+const onAcceptClick = () => {
+  $q.dialog({ component: OfferForm }).onOk(() => {
+    refreshProposes(); 
+    $q.notify({ message: "成功接單", position: "bottom-right" });
+  });
+};
 
 onMounted(async () => {
   await pb.refreshProposes();
@@ -28,7 +39,7 @@ onMounted(async () => {
         <q-separator />
 
         <q-card-actions vertical>
-          <q-btn flat label="接單" />
+          <q-btn flat label="接單" @click="onAcceptClick" />
         </q-card-actions>
       </div>
     </ProposeCard>
