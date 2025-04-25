@@ -6,22 +6,26 @@ const pb = new PocketBase("http://localhost:8090");
 export const useIdentity = defineStore('identity', () => {
     
     const isLogin = ref(false);
+    const authUser = ref<RecordModel | null>(null);
 
     const getIsLogin = () => isLogin.value;
+    const getAuthUser = () => authUser.value;
     
     const checkLogin = async () => {
         try {
             if (pb.authStore.record) {
-                const { token } = await pb
+                const { record, token } = await pb
                     .collection(pb.authStore.record.collectionName)
                     .authRefresh()
 
                 if (token) {
+                    authUser.value = record as RecordModel;
                     isLogin.value = true
                 } else {
                     throw new Error('Login failed')
                 }
             } else {
+                authUser.value = null
                 isLogin.value = false
             }
         } catch (error) {
@@ -36,8 +40,9 @@ export const useIdentity = defineStore('identity', () => {
 
         try{
             const authData = await pb.collection("users").authWithPassword(email, password);
+            authUser.value = authData.record;
             isLogin.value = true;
-            console.log(isLogin.value)
+            console.log(authUser.value)
         }catch(e){
             console.error(e);
             return;
@@ -50,11 +55,10 @@ export const useIdentity = defineStore('identity', () => {
     };
 
     const fetchAvatarURL = (id: string | undefined, avatar: string | undefined) => {
-        console.log(id, avatar)
         const defaultAvatar = './vue.svg';
         if(!id || !avatar) return defaultAvatar
         return `${pb.baseURL}/api/files/users/${id}/${avatar}`
     }
 
-    return { pb, getIsLogin, checkLogin, login, logout, fetchAvatarURL };
+    return { pb, getIsLogin,getAuthUser, checkLogin, login, logout, fetchAvatarURL };
 })
