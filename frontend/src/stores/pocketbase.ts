@@ -77,7 +77,7 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
     }
 
     const createOffer = async (offer: FormData) => {
-        const createdOffer = await pb.collection("Propose").create(offer)
+        const createdOffer = await pb.collection("offer").create(offer)
         return createdOffer
     }
 
