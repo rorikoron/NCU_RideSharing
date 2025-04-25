@@ -66,6 +66,7 @@ onBeforeMount(async () => {
     <q-page-container class="col-grow">
       <q-page padding>
         <router-view />
+
       </q-page>
 
       <q-page-sticky position="bottom-right">

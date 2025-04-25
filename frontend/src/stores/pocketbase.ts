@@ -69,6 +69,12 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
             page: page,
         })
     }
+
+    const createOffer = async (offer: FormData) => {
+        const createdOffer = await pb.collection("offer").create(offer)
+        return createdOffer
+    }
+
     const fetchProposeOffers = async (ids: string[]) : Promise<Offer[]>  => {
         return await pb.collection("Offer").getFullList({
             filter: `${ids.map(id => `propose = "${id}"`).join(' || ')}`,
@@ -83,8 +89,6 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
             status: 'accepted',
             price: offer.price,
         })
-
-
     }
     
     return{
@@ -94,5 +98,6 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         proposes,
         refreshProposes,
         createPropose,
+        createOffer,
     }
 })
