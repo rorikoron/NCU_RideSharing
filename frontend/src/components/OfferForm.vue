@@ -1,14 +1,19 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from "quasar";
-import { usePocketbaseStore, type Offer } from "../stores/pocketbase";
-import { ref } from "vue";
+import { usePocketbaseStore, type MutableOffer } from "../stores/pocketbase";
+import { onMounted, ref } from "vue";
+import { useIdentity } from "@/stores/identity";
+
+const { getAuthUser } = useIdentity();
+const props = defineProps<{
+  propose: string;
+}>();
 
 defineEmits([
   // REQUIRED; need to specify some events that your
   // component will emit through useDialogPluginComponent()
   ...useDialogPluginComponent.emits,
 ]);
-
 
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
@@ -27,17 +32,22 @@ const createOffer = async () => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-const formValue = ref<Offer>({
+const formValue = ref<MutableOffer>({
+  propose: props.propose,
+  driver: getAuthUser()?.id ?? "",
   price: 0,
   appendix: "",
 });
 
+onMounted(() => {
+  console.log(getAuthUser()?.id);
+});
 </script>
 
 <template>
-    <q-dialog ref="dialogRef" @hide="onDialogHide" persistent class="z-top">
+  <q-dialog ref="dialogRef" @hide="onDialogHide" persistent class="z-top">
     <q-card class="q-pa-md">
       <div class="text-h6">提交接單報價</div>
 
@@ -64,12 +74,7 @@ const formValue = ref<Offer>({
             color="primary"
             @click.prevent="createOffer()"
           />
-          <q-btn
-            label="取消"
-            icon="delete"
-            flat
-            @click="onDialogCancel"
-          />
+          <q-btn label="取消" icon="delete" flat @click="onDialogCancel" />
         </div>
       </q-form>
     </q-card>

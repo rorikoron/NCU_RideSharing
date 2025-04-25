@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from "quasar";
-import { usePocketbaseStore, type Propose } from "../stores/pocketbase";
+import { usePocketbaseStore, type MutablePropose } from "../stores/pocketbase";
 import { ref } from "vue";
 import DateTimePicker from "./DateTimePicker.vue";
 import LocationSelector from "./LocationSelector.vue";
@@ -39,14 +39,14 @@ const todayStr = date_timezone_taiwan
   .replace(/T/, " ")
   .substring(0, 16);
 
-const formValue = ref<Propose>({
+const formValue = ref<MutablePropose>({
   // ATTENTION: here should implement the ID of user
   proponent: "748lod0038buwzd",
   origin: "",
   arrival: "",
-  status: "pending",
   headcount: 1,
   departure: todayStr,
+  appendix: "",
 });
 </script>
 

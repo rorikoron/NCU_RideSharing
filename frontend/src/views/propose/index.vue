@@ -10,16 +10,20 @@ const $q = useQuasar();
 const pb = usePocketbaseStore();
 const { refreshProposes } = pb;
 
-const onAcceptClick = () => {
-  $q.dialog({ component: OfferForm }).onOk(() => {
-    refreshProposes(); 
+const onAcceptClick = (proposeId: string) => {
+  $q.dialog({
+    component: OfferForm,
+    componentProps: {
+      propose: proposeId,
+    },
+  }).onOk(() => {
+    refreshProposes();
     $q.notify({ message: "成功接單", position: "bottom-right" });
   });
 };
 
 onMounted(async () => {
   await pb.refreshProposes();
-  console.log(pb.proposes[0].expand?.proponent);
 });
 </script>
 
@@ -39,7 +43,7 @@ onMounted(async () => {
         <q-separator />
 
         <q-card-actions vertical>
-          <q-btn flat label="接單" @click="onAcceptClick" />
+          <q-btn flat label="接單" @click="onAcceptClick(propose.id)" />
         </q-card-actions>
       </div>
     </ProposeCard>

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useIdentity } from "@/stores/identity";
-import { usePocketbaseStore, type User } from "@/stores/pocketbase";
+import { type User } from "@/stores/pocketbase";
 
 const { fetchAvatarURL } = useIdentity();
-const props = defineProps<{
+defineProps<{
   user: User;
 }>();
 </script>

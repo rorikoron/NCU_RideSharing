@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { useIdentity } from "@/stores/identity";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
-const { login } = useIdentity();
 const links = [
   {
     icon: "fa-solid fa-users",

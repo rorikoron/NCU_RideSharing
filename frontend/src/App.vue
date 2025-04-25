@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from "vue";
 import Toolbar from "./layouts/ToolBar.vue";
 import { useQuasar } from "quasar";
-import { usePocketbaseStore, type User } from "./stores/pocketbase";
+import { usePocketbaseStore } from "./stores/pocketbase";
 import ProposeForm from "@/components/ProposeForm.vue";
 import { useIdentity } from "./stores/identity";
 const $q = useQuasar();
@@ -66,7 +66,6 @@ onBeforeMount(async () => {
     <q-page-container class="col-grow">
       <q-page padding>
         <router-view />
-
       </q-page>
 
       <q-page-sticky position="bottom-right">
