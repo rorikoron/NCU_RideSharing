@@ -3,8 +3,8 @@ import ProposeCard from "@/components/ProposeCard.vue";
 import UserSummary from "@/components/UserSummary.vue";
 import {
   usePocketbaseStore,
-  type Offer,
-  type Propose,
+  type ImmutableOffer,
+  type ImmutablePropose,
   type ProposeStatus,
 } from "@/stores/pocketbase";
 import { onMounted, ref } from "vue";
@@ -12,8 +12,8 @@ import { useRoute } from "vue-router";
 
 const { fetchUserProposes, fetchProposeOffers, acceptOffer } =
   usePocketbaseStore();
-const proposes = ref<Propose[]>([]);
-const offers = ref<Offer[]>([]);
+const proposes = ref<ImmutablePropose[]>([]);
+const offers = ref<ImmutableOffer[]>([]);
 
 const statusMap: Record<ProposeStatus, string> = {
   pending: "待選擇",
@@ -26,9 +26,9 @@ const statusMap: Record<ProposeStatus, string> = {
 const route = useRoute();
 const page = Number(route.query.page ?? 1) as number;
 
-const handleAcceptOffer = async (proposeId: string, offer: Offer) => {
+const handleAcceptOffer = async (proposeId: string, offerId: string) => {
   try {
-    await acceptOffer(proposeId, offer);
+    await acceptOffer(proposeId, offerId);
     await refreshOffers();
   } catch (error) {
     console.log(error);
@@ -38,7 +38,7 @@ const handleAcceptOffer = async (proposeId: string, offer: Offer) => {
 const refreshOffers = async () => {
   // ATTENTION: here should implement the ID of user
   proposes.value = await fetchUserProposes("748lod0038buwzd", page);
-  const offerDelegates = proposes.value.map(({ id }) => id ?? "");
+  const offerDelegates = proposes.value.map(({ id }) => id);
   offers.value = await fetchProposeOffers(offerDelegates);
 };
 
@@ -70,7 +70,7 @@ onMounted(async () => {
           <q-item-section side>
             <q-btn
               v-if="propose.status === 'pending'"
-              @click="handleAcceptOffer(propose.id ?? '', offer)"
+              @click="handleAcceptOffer(propose.id, offer.id)"
               label="接受"
               rounded
               outline

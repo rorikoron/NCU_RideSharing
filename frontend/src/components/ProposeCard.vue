@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { type Propose } from "../stores/pocketbase";
+import { type ImmutablePropose } from "../stores/pocketbase";
 import LocationsPath from "../components/LocationsPath.vue";
-const props = withDefaults(
+withDefaults(
   defineProps<{
-    propose: Propose;
+    propose: ImmutablePropose;
     bordered?: boolean;
   }>(),
   {

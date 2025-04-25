@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import PocketBase, { type RecordModel } from 'pocketbase'
+import PocketBase from 'pocketbase'
 import { ref } from 'vue'
 
 export interface User{
@@ -14,40 +14,46 @@ export interface User{
 }
 
 export type ProposeStatus = 'pending' | 'accepted' | 'completed' | 'cancelled'
-export interface Propose{
-    id?: string,
+
+export interface MutablePropose{
     proponent: string,
-    offer: string,
     origin: string,
     arrival: string,
     departure: string,
     headcount: number
-    price?: number
-    status: ProposeStatus
     appendix?: string
-    created?: string,
-    updated?: string,
-    expand?:{
+}
+export interface ImmutablePropose extends MutablePropose{
+    id: string,
+    offer: string,
+    status: ProposeStatus
+    created: string,
+    updated: string,
+    expand:{
         proponent: User
     }
 }
-export interface Offer {
-    id?: string;
+
+export interface MutableOffer{
     propose: string;
     driver: string;
     price: number;
     appendix?: string
-    created?: string;
-    updated?: string;
+
+}
+export interface ImmutableOffer extends MutableOffer{
+    id: string;
+    created: string;
+    updated: string;
     expand?: {
-      propose: Propose;
+      propose: ImmutablePropose;
       driver: User;
     };
   }
 const pb = new PocketBase('http://localhost:8090')
 
 export const usePocketbaseStore = defineStore('pocketbase', () => {
-    const proposes = ref<Propose[]>([])
+    const proposes = ref<ImmutablePropose[]>([])
 
     const refreshProposes = async () => {
         proposes.value = await pb.collection("Propose").getFullList({
@@ -62,7 +68,7 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
     }
 
 
-    const fetchUserProposes = async (id: string, page: number) : Promise<Propose[]> => {
+    const fetchUserProposes = async (id: string, page: number) : Promise<ImmutablePropose[]> => {
         return await pb.collection("Propose").getFullList({
             filter: `proponent = "${id}"`,
             sort: '-created',
@@ -75,7 +81,7 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         return createdOffer
     }
 
-    const fetchProposeOffers = async (ids: string[]) : Promise<Offer[]>  => {
+    const fetchProposeOffers = async (ids: string[]) : Promise<ImmutableOffer[]>  => {
         return await pb.collection("Offer").getFullList({
             filter: `${ids.map(id => `propose = "${id}"`).join(' || ')}`,
             sort: '-created',
@@ -83,11 +89,10 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         })
     }
 
-    const acceptOffer = async (proposeId: string, offer: Offer) => {
-        const updatedPropose = await pb.collection("Propose").update(proposeId, {
-            offer: offer.id,
+    const acceptOffer = async (proposeId: string, offerId: string) => {
+        await pb.collection("Propose").update(proposeId, {
+            offer: offerId,
             status: 'accepted',
-            price: offer.price,
         })
     }
     
