@@ -37,7 +37,7 @@ const formValue = ref<Offer>({
 </script>
 
 <template>
-    <q-dialog ref="dialogRef" @hide="onDialogHide" persistent>
+    <q-dialog ref="dialogRef" @hide="onDialogHide" persistent class="z-top">
     <q-card class="q-pa-md">
       <div class="text-h6">提交接單報價</div>
 
