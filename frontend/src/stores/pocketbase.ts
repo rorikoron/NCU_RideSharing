@@ -61,12 +61,6 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         return createdPropose
     }
 
-    const fetchAvatarURL = (user: User | undefined) => {
-        const defaultAvatar = './vue.svg';
-        console.log(user)
-        if(!user || !user.avatar) return defaultAvatar
-        return `${pb.baseURL}/api/files/users/${user.id}/${user.avatar}`
-    }
 
     const fetchUserProposes = async (id: string, page: number) : Promise<Propose[]> => {
         return await pb.collection("Propose").getFullList({
@@ -95,7 +89,6 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
     
     return{
         acceptOffer,
-        fetchAvatarURL,
         fetchUserProposes,
         fetchProposeOffers,
         proposes,

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useIdentity } from "@/stores/identity";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
+const { login } = useIdentity();
 const links = [
   {
     icon: "fa-solid fa-users",
@@ -24,7 +26,6 @@ const links = [
       :to="link.to"
       clickable
       v-ripple
-      class="items-center"
     >
       <q-item-section avatar>
         <q-avatar :icon="link.icon" size="2em" />

@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { useIdentity } from "@/stores/identity";
 import { usePocketbaseStore, type User } from "@/stores/pocketbase";
 
-const { fetchAvatarURL } = usePocketbaseStore();
+const { fetchAvatarURL } = useIdentity();
 const props = defineProps<{
   user: User;
 }>();
@@ -12,7 +13,7 @@ const props = defineProps<{
     <q-item-section avatar>
       <q-avatar size="md">
         <q-img
-          :src="fetchAvatarURL(user)"
+          :src="fetchAvatarURL(user.id, user.avatar)"
           :ratio="1"
           fit="cover"
           alt="avatar"
