@@ -25,7 +25,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-  <q-layout v-if="getIsLogin()" class="row">
+  <q-layout v-if="getIsLogin()" class="row" view="lHh Lpr lFf">
     <q-drawer
       v-model="drawer"
       show-if-above
@@ -40,7 +40,7 @@ onBeforeMount(async () => {
           border-right: 1px solid #ddd;
         "
       >
-        <Toolbar class="col-2" />
+        <Toolbar />
       </q-scroll-area>
 
       <q-img class="absolute-top bg-primary" style="height: 150px">
