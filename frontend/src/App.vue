@@ -2,7 +2,7 @@
 import { onBeforeMount, ref } from "vue";
 import Toolbar from "./layouts/ToolBar.vue";
 import { useQuasar } from "quasar";
-import { usePocketbaseStore } from "./stores/pocketbase";
+import { usePocketbaseStore, type User } from "./stores/pocketbase";
 import ProposeForm from "@/components/ProposeForm.vue";
 import { useIdentity } from "./stores/identity";
 const $q = useQuasar();
@@ -18,6 +18,38 @@ const createProposeForm = () => {
 };
 const email = ref("");
 const password = ref("");
+
+const panel = ref("login");
+const isDriver = ref(false);
+
+const registerUser = async () => {
+  if (formValue.value.password !== formValue.value.comfirmPassword) {
+    $q.notify({ type: "negative", message: "兩次密碼不一致" });
+    return;
+  }
+  const formData = new FormData();
+  const { registerUser } = usePocketbaseStore();
+
+  Object.entries(formValue.value).forEach(([key, value]) => {
+    formData.append(key, String(value));
+  });
+
+  try {
+    await registerUser(formData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const formValue = ref<>({
+  name: "",
+  email: "",
+  password: "",
+  comfirmPassword: "",
+  plateNumber: "",       
+  vehicleType: "",       
+  driverLicense: null,
+});
 
 onBeforeMount(async () => {
   await checkLogin();
@@ -84,11 +116,59 @@ onBeforeMount(async () => {
   </q-layout>
 
   <div v-else>
-    <q-form @submit.prevent="() => login(email, password)" class="q-gutter-md">
-      <q-input v-model="email" label="Email" type="email" outlined />
-      <q-input v-model="password" label="Password" type="password" outlined />
+    <q-tabs
+      v-model="panel"
+      class="text-primary"
+      align="justify"
+      active-color="primary"
+      indicator-color="primary"
+    >
+      <q-tab name="login" label="登入" />
+      <q-tab name="register" label="註冊" />
+    </q-tabs>
 
-      <q-btn label="登入" color="primary" type="submit" />
-    </q-form>
+    <q-tab-panels v-model="panel" animated>
+      <q-tab-panel name="login">
+        <q-form @submit.prevent="() => login(email, password)" class="q-gutter-md q-mt-md">
+          <q-input v-model="email" label="Email" type="email" outlined />
+          <q-input v-model="password" label="Password" type="password" outlined />
+          <q-btn label="登入" color="primary" type="submit" />
+        </q-form>
+      </q-tab-panel>
+
+      <q-tab-panel name="register">
+        <q-form @submit.prevent="registerUser" class="q-gutter-md q-mt-md">
+          <q-toggle
+            v-model="isDriver"
+            label="我是司機"
+            left-label
+            color="primary"
+          />
+          <q-input v-model="formValue.name" label="名稱" outlined />
+          <q-input v-model="formValue.email" label="Email" type="email" outlined />
+          <q-input v-model="formValue.password" label="密碼" type="password" outlined />
+          <q-input v-model="formValue.comfirmPassword" label="確認密碼" type="password" outlined />
+          <q-input
+            v-if="isDriver"
+            v-model="formValue.plateNumber"
+            label="車牌號碼"
+            outlined
+          />
+          <q-input
+            v-if="isDriver"
+            v-model="formValue.vehicleType"
+            label="車型"
+            outlined
+          />
+          <q-file
+            v-if="isDriver"
+            v-model="formValue.driverLicense"
+            label="上傳駕照"
+            outlined
+          />
+          <q-btn label="註冊" color="secondary" type="submit" />
+        </q-form>
+      </q-tab-panel>
+    </q-tab-panels>
   </div>
 </template>
