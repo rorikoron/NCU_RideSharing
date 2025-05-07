@@ -30,7 +30,7 @@ watch(localModelValue, (newValue) => {
     <q-input outlined v-model="localModelValue">
       <template v-slot:prepend>
         <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale" class="z-top">
             <q-date v-model="localModelValue" mask="YYYY-MM-DD HH:mm">
               <div class="row items-center justify-end">
                 <q-btn v-close-popup label="Close" color="primary" flat />
