@@ -20,7 +20,9 @@ export interface MutablePropose{
     origin: string,
     arrival: string,
     departure: string,
-    headcount: number
+    headcount: number,
+    headcount_limit: number,
+    is_commission: boolean,
     appendix?: string
 }
 export interface ImmutablePropose extends MutablePropose{
@@ -54,10 +56,12 @@ const pb = new PocketBase('http://localhost:8090')
 
 export const usePocketbaseStore = defineStore('pocketbase', () => {
     const proposes = ref<ImmutablePropose[]>([])
+    const offerFilter = ref<string[]>([])
 
-    const refreshProposes = async () => {
+    const refreshProposes = async (isDriver?: boolean) => {
         proposes.value = await pb.collection("Propose").getFullList({
             sort: 'created',
+            filter: isDriver ? 'is_commision = true' : 'headcount_limit > headcount',
             expand: 'proponent'
         });
     }

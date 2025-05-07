@@ -45,6 +45,8 @@ const formValue = ref<MutablePropose>({
   origin: "",
   arrival: "",
   headcount: 1,
+  headcount_limit: 0,
+  is_commission: false,
   departure: todayStr,
   appendix: "",
 });
@@ -62,12 +64,29 @@ const formValue = ref<MutablePropose>({
           @update:arrivalModelValue="formValue.arrival = $event"
         />
         <DateTimePicker v-model="formValue.departure" label="出發時間" />
-        <q-input
-          v-model="formValue.headcount"
-          label="人數*"
-          type="number"
-          :rules="[(val) => !!val || '請填人數']"
-          outlined
+        <div class="row justify-between q-col-gutter-x-sm">
+          <q-input
+            v-model="formValue.headcount"
+            label="人數*"
+            class="col"
+            type="number"
+            :rules="[(val) => !!val || '請填人數']"
+            outlined
+          />
+          <q-input
+            v-model="formValue.headcount_limit"
+            label="上限人數*"
+            class="col"
+            type="number"
+            :rules="[(val) => !!val || '請填上限人數']"
+            outlined
+          />
+        </div>
+        <q-toggle
+          v-model="formValue.is_commission"
+          label="是否在本平台找司機"
+          color="primary"
+          class="q-mt-md"
         />
         <q-input
           v-model="formValue.appendix"

@@ -42,7 +42,7 @@ withDefaults(
         square
         class="q-mx-none"
         :ripple="false"
-        :label="propose.headcount"
+        :label="`${propose.headcount} / ${propose.headcount_limit}`"
       />
 
       <q-chip
