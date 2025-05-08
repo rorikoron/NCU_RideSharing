@@ -71,7 +71,7 @@ const props = withDefaults(
   <q-card class="fit q-pa-xs col" flat :bordered="bordered">
     <!-- make as new component (ProposeDetail?)-->
 
-    <UserSummary :user="propose.expand!.proponent" />
+    <UserSummary :user="propose.expand?.proponent" />
     <q-separator />
 
     <q-card-section class="q-col-gutter-y-md">
