@@ -37,19 +37,23 @@ const onJoinClick = async (proposeId: string) => {
   try {
     await pb.createParticipant(participant);
     await refreshProposes();
+    await refreshHeadcount();
   } catch (e) {
     console.error(e);
     $q.notify({ message: "加入共乘失敗", position: "bottom-right" });
   }
 };
-
-const totalHeadCount = ref(0);
-onMounted(async () => {
+const refreshHeadcount = async () => {
   const participants = await fetchParticipant(props.propose.id);
-  console.log(participants);
+  totalHeadCount.value = 0;
   participants.forEach((participant: ImmutableParticipant) => {
     totalHeadCount.value += participant.headcount;
   });
+};
+
+const totalHeadCount = ref(0);
+onMounted(async () => {
+  await refreshHeadcount();
 });
 const props = withDefaults(
   defineProps<{
