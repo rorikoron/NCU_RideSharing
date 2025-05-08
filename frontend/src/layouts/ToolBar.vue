@@ -13,6 +13,16 @@ const links = [
     text: "提案回覆",
     to: "/feedback",
   },
+  {
+    icon: "fa-solid fa-bell",
+    text: "通知",
+    to: "/notification",
+  },
+  {
+    icon: "fa-solid fa-user",
+    text: "個人資料",
+    to: "/profile",
+  },
 ];
 </script>
 

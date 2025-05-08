@@ -63,7 +63,7 @@ onMounted(async () => {
         >
           <q-separator v-if="i != 0" inset />
           <q-item-section class="col-3" avatar>
-            <UserSummary :user="offer.expand!.driver" />
+            <UserSummary :user="offer.expand?.driver" />
           </q-item-section>
           <q-item-section>{{ offer.price }}元</q-item-section>
           <q-item-section>備註：{{ offer?.appendix }}</q-item-section>

@@ -17,6 +17,15 @@ const router = createRouter({
             name: 'feedback',
             component: () => import('@/views/Feedback.vue')
         },{
+            path: '/notification',
+            name: 'notification',
+            component: () => import('@/views/Notification.vue')
+        },{
+            path: '/profile',
+            name: 'profile',
+            component: () => import('@/views/Profile.vue')
+        },
+        {
             path: '/propose/:id',
             name: 'propose-detail',
             component: () => import('@/views/propose/[id].vue'),
