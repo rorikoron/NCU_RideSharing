@@ -12,20 +12,39 @@ defineEmits([
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
 
-const createPropose = async () => {
-  const formData = new FormData();
-  const { createPropose } = usePocketbaseStore();
-
-  Object.entries(formValue.value).forEach(([key, value]) => {
+const formPropose = (proposeValue: MutablePropose) => {
+  const propose = new FormData();
+  Object.entries(proposeValue).forEach(([key, value]) => {
     if (key == "departure") {
-      formData.append(key, value + ":00");
+      propose.append(key, value + ":00");
     } else {
-      formData.append(key, String(value));
+      propose.append(key, String(value));
     }
   });
+  return propose;
+};
+const formPariticipant = (
+  proposeId: string,
+  proponent: string,
+  headcount: string
+) => {
+  const participant = new FormData();
+  participant.append("propose", proposeId);
+  participant.append("participant", proponent);
+  participant.append("headcount", headcount);
+  participant.append("is_proponent", "true");
+  return participant;
+};
+
+const createPropose = async () => {
+  const { createPropose, createParticipant } = usePocketbaseStore();
 
   try {
-    await createPropose(formData);
+    await createPropose(formPropose(proposeValue.value)).then((res) => {
+      createParticipant(
+        formPariticipant(res.id, res!.proponent, String(totalHeadcount.value))
+      );
+    });
     onDialogOK();
   } catch (error) {
     console.log(error);
@@ -39,15 +58,17 @@ const todayStr = date_timezone_taiwan
   .replace(/T/, " ")
   .substring(0, 16);
 
-const formValue = ref<MutablePropose>({
+const proposeValue = ref<MutablePropose>({
   // ATTENTION: here should implement the ID of user
   proponent: "748lod0038buwzd",
   origin: "",
   arrival: "",
-  headcount: 1,
+  headcount_limit: 0,
+  is_commission: false,
   departure: todayStr,
   appendix: "",
 });
+const totalHeadcount = ref(1);
 </script>
 
 <template>
@@ -56,21 +77,38 @@ const formValue = ref<MutablePropose>({
       <div class="text-h5 text-bold q-py-md">新增共乘提議</div>
       <q-form class="q-gutter-y-md q-py-md form">
         <LocationSelector
-          :originModelValue="formValue.origin"
-          :arrivalModelValue="formValue.arrival"
-          @update:originModelValue="formValue.origin = $event"
-          @update:arrivalModelValue="formValue.arrival = $event"
+          :originModelValue="proposeValue.origin"
+          :arrivalModelValue="proposeValue.arrival"
+          @update:originModelValue="proposeValue.origin = $event"
+          @update:arrivalModelValue="proposeValue.arrival = $event"
         />
-        <DateTimePicker v-model="formValue.departure" label="出發時間" />
-        <q-input
-          v-model="formValue.headcount"
-          label="人數*"
-          type="number"
-          :rules="[(val) => !!val || '請填人數']"
-          outlined
+        <DateTimePicker v-model="proposeValue.departure" label="出發時間" />
+        <div class="row justify-between q-col-gutter-x-sm">
+          <q-input
+            v-model="totalHeadcount"
+            label="人數*"
+            class="col"
+            type="number"
+            :rules="[(val) => !!val || '請填人數']"
+            outlined
+          />
+          <q-input
+            v-model="proposeValue.headcount_limit"
+            label="上限人數*"
+            class="col"
+            type="number"
+            :rules="[(val) => !!val || '請填上限人數']"
+            outlined
+          />
+        </div>
+        <q-toggle
+          v-model="proposeValue.is_commission"
+          label="是否在本平台找司機"
+          color="primary"
+          class="q-mt-md"
         />
         <q-input
-          v-model="formValue.appendix"
+          v-model="proposeValue.appendix"
           placeholder="打備註..."
           type="textarea"
           outlined
