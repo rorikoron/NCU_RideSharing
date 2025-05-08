@@ -20,7 +20,6 @@ export interface MutablePropose{
     origin: string,
     arrival: string,
     departure: string,
-    headcount: number,
     headcount_limit: number,
     is_commission: boolean,
     appendix?: string
@@ -33,6 +32,19 @@ export interface ImmutablePropose extends MutablePropose{
     updated: string,
     expand:{
         proponent: User
+    }
+}
+export interface MutableParticipant{
+    propose: string,
+    participant: string,
+    headcount: number,
+}
+export interface ImmutableParticipant extends MutableParticipant{
+    id: string,
+    is_proponent: boolean,
+    expand: {
+        proponent: ImmutablePropose,
+        participant: User,
     }
 }
 
@@ -56,19 +68,29 @@ const pb = new PocketBase('http://localhost:8090')
 
 export const usePocketbaseStore = defineStore('pocketbase', () => {
     const proposes = ref<ImmutablePropose[]>([])
-    const offerFilter = ref<string[]>([])
 
     const refreshProposes = async (isDriver?: boolean) => {
         proposes.value = await pb.collection("Propose").getFullList({
             sort: 'created',
-            filter: isDriver ? 'is_commision = true' : 'headcount_limit > headcount',
+            filter: isDriver ? 'is_commision = true' : '',
             expand: 'proponent'
         });
     }
 
     const createPropose = async (propose: FormData) => {
-        const createdPropose = await pb.collection("Propose").create(propose)
-        return createdPropose
+        return await pb.collection("Propose").create(propose)
+    }
+
+    const createParticipant = async (participant: FormData) => {
+        await pb.collection("Participant").create(participant)
+    }
+
+    /* combine these function to one to join with propose(Go custom hook) */
+    const fetchParticipant = async (proposesId: string) : Promise<any> => {
+        return await pb.collection("Participant").getFullList({
+            filter: `propose = "${proposesId}"`,
+            requestKey: null
+        })
     }
 
 
@@ -103,10 +125,12 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
     return{
         acceptOffer,
         fetchUserProposes,
+        fetchParticipant,
         fetchProposeOffers,
         proposes,
         refreshProposes,
         createPropose,
+        createParticipant,
         createOffer,
     }
 })

@@ -1,9 +1,60 @@
 <script setup lang="ts">
-import { type ImmutablePropose } from "../stores/pocketbase";
+import {
+  usePocketbaseStore,
+  type ImmutableParticipant,
+  type ImmutablePropose,
+} from "../stores/pocketbase";
 import LocationsPath from "../components/LocationsPath.vue";
-withDefaults(
+import { onMounted, ref } from "vue";
+import { useQuasar } from "quasar";
+import OfferForm from "@/components/OfferForm.vue";
+import { useIdentity } from "@/stores/identity";
+import UserSummary from "@/components/UserSummary.vue";
+const { fetchParticipant } = usePocketbaseStore();
+
+const $q = useQuasar();
+const pb = usePocketbaseStore();
+const { getAuthUser, getIsDriver } = useIdentity();
+const { refreshProposes } = pb;
+
+const onAcceptClick = (proposeId: string) => {
+  $q.dialog({
+    component: OfferForm,
+    componentProps: {
+      propose: proposeId,
+    },
+  }).onOk(() => {
+    refreshProposes();
+    $q.notify({ message: "成功接單", position: "bottom-right" });
+  });
+};
+const onJoinClick = async (proposeId: string) => {
+  let participant = new FormData();
+  participant.append("propose", proposeId);
+  participant.append("participant", getAuthUser()!.id);
+  participant.append("headcount", "1");
+
+  try {
+    await pb.createParticipant(participant);
+    await refreshProposes();
+  } catch (e) {
+    console.error(e);
+    $q.notify({ message: "加入共乘失敗", position: "bottom-right" });
+  }
+};
+
+const totalHeadCount = ref(0);
+onMounted(async () => {
+  const participants = await fetchParticipant(props.propose.id);
+  console.log(participants);
+  participants.forEach((participant: ImmutableParticipant) => {
+    totalHeadCount.value += participant.headcount;
+  });
+});
+const props = withDefaults(
   defineProps<{
     propose: ImmutablePropose;
+    participant?: number;
     bordered?: boolean;
   }>(),
   {
@@ -14,7 +65,10 @@ withDefaults(
 
 <template>
   <q-card class="fit q-pa-xs col" flat :bordered="bordered">
-    <slot name="header" />
+    <!-- make as new component (ProposeDetail?)-->
+
+    <UserSummary :user="propose.expand!.proponent" />
+    <q-separator />
 
     <q-card-section class="q-col-gutter-y-md">
       <q-card-section
@@ -42,7 +96,7 @@ withDefaults(
         square
         class="q-mx-none"
         :ripple="false"
-        :label="`${propose.headcount} / ${propose.headcount_limit}`"
+        :label="`${totalHeadCount} / ${propose.headcount_limit}`"
       />
 
       <q-chip
@@ -57,6 +111,27 @@ withDefaults(
         <q-tooltip>{{ propose.appendix }}</q-tooltip>
       </q-chip>
     </q-card-section>
-    <slot />
+
+    <!-- Actions -->
+
+    <div v-if="true">
+      <q-separator />
+
+      <q-card-actions v-if="getIsDriver()" vertical>
+        <q-btn flat label="接單" @click="onAcceptClick(propose.id)" />
+      </q-card-actions>
+
+      <q-card-actions
+        v-if="!getIsDriver() && propose.headcount_limit > totalHeadCount"
+        vertical
+      >
+        <q-btn
+          flat
+          icon="group_add"
+          label="加入共乘"
+          @click="onJoinClick(propose.id)"
+        />
+      </q-card-actions>
+    </div>
   </q-card>
 </template>
