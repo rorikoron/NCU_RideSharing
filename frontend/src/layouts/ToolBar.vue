@@ -30,11 +30,9 @@ const links = [
       </q-item-section>
       <q-item-section class="text-h6">{{ link.text }}</q-item-section>
     </q-item>
-  </q-list>
 
-  <!-- theme changer -->
-  <q-list class="q-pa-sm">
-    <q-item class="items-center">
+    <!-- theme changer -->
+    <q-item class="items-center q-mt-md">
       <q-icon name="fa-solid fa-sun" v-if="!$q.dark.isActive" />
       <q-icon name="fa-solid fa-moon" v-else />
       <q-toggle
