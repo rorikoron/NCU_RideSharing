@@ -68,7 +68,7 @@ const props = withDefaults(
 </script>
 
 <template>
-  <q-card class="fit q-pa-xs col" flat :bordered="bordered">
+  <q-card class="fit q-pa-xs col" flat :bordered="bordered" v-if="propose">
     <!-- make as new component (ProposeDetail?)-->
 
     <UserSummary :user="propose.expand!.proponent" />
