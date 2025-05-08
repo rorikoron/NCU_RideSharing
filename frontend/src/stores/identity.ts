@@ -6,10 +6,14 @@ const pb = new PocketBase("http://localhost:8090");
 export const useIdentity = defineStore('identity', () => {
     
     const isLogin = ref(false);
+    const isDriver = ref(false)
     const authUser = ref<RecordModel | null>(null);
+
 
     const getIsLogin = () => isLogin.value;
     const getAuthUser = () => authUser.value;
+    const getIsDriver = () => isDriver.value;
+
     
     const checkLogin = async () => {
         try {
@@ -21,12 +25,14 @@ export const useIdentity = defineStore('identity', () => {
                 if (token) {
                     authUser.value = record as RecordModel;
                     isLogin.value = true
+                    isDriver.value = record?.is_driver || false
                 } else {
                     throw new Error('Login failed')
                 }
             } else {
                 authUser.value = null
                 isLogin.value = false
+                isDriver.value = false
             }
         } catch (error) {
             isLogin.value = false
@@ -42,6 +48,7 @@ export const useIdentity = defineStore('identity', () => {
             const authData = await pb.collection("users").authWithPassword(email, password);
             authUser.value = authData.record;
             isLogin.value = true;
+            isDriver.value = authUser.value?.is_driver || false
             console.log(authUser.value)
         }catch(e){
             console.error(e);
@@ -60,5 +67,5 @@ export const useIdentity = defineStore('identity', () => {
         return `${pb.baseURL}/api/files/users/${id}/${avatar}`
     }
 
-    return { pb, getIsLogin,getAuthUser, checkLogin, login, logout, fetchAvatarURL };
+    return { pb, getIsLogin, getIsDriver, getAuthUser, checkLogin, login, logout, fetchAvatarURL };
 })
