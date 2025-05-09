@@ -55,8 +55,18 @@ onMounted(async () => {
         :class="{
           'text-primary': propose.status==='pending',
           'text-positive':    propose.status==='accepted',
-          'text-inative': propose.status==='completed',
+          'text-active': propose.status==='completed',
           'text-negative': propose.status==='cancelled'
+        }"
+        :style = "{
+          border: '1px solid currentColor',
+          borderRadius: '12px',
+          padding: '2px 8px',
+          marginLeft: '8px',
+          backgroundColor: '#f5f5f5',
+          fontSize: '0.85em',
+          fontWeight: '500',
+          display: 'inline-block'
         }"
       >
         {{ statusMap[propose.status] }}
