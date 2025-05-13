@@ -70,13 +70,15 @@ onBeforeMount(async () => {
 
       <q-page-sticky position="bottom-right">
         <q-btn
-          flat
-          rounded
+          round
+          glossy
+          class = "shadow-10"
+          v-ripple
           icon="fa-solid fa-plus"
           size="md"
-          label="新增共乘提議"
           @click="createProposeForm"
         />
+        <q-tooltip class="bg-white text-black">新增共乘提議</q-tooltip>
       </q-page-sticky>
     </q-page-container>
   </q-layout>
