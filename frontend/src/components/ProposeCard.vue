@@ -102,6 +102,14 @@ const props = withDefaults(
     </q-card-section>
 
     <q-card-section>
+      <UserCounter
+        v-model="joiningHeadcount"
+        :min="1"
+        :max="propose.headcount_limit"
+        :headcount-limit="propose.headcount_limit"
+        :current-head-count="currentHeadCount"
+        @headcount-changed="handleHeadcountChanged"
+      />
       <q-chip
         icon="person"
         size="md"
@@ -110,14 +118,6 @@ const props = withDefaults(
         class="q-mx-none"
         :ripple="false"
         :label="`${currentHeadCount} / ${propose.headcount_limit}`"
-      />
-      <UserCounter
-        v-model="joiningHeadcount"
-        :min="1"
-        :max="propose.headcount_limit"
-        :headcount-limit="propose.headcount_limit"
-        :current-head-count="currentHeadCount"
-        @headcount-changed="handleHeadcountChanged"
       />
       <q-chip
         v-if="propose?.appendix"
