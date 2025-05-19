@@ -139,16 +139,21 @@ const props = withDefaults(
         <q-btn flat label="接單" @click="onAcceptClick(propose.id)" />
       </q-card-actions>
 
-      <q-card-actions
-        v-if="!getIsDriver() && propose.headcount_limit > currentHeadCount"
-        vertical
-      >
+      <q-card-actions vertical>
         <q-btn
           flat
           icon="group_add"
           label="加入共乘"
           @click="onJoinClick(propose.id)"
-        />
+          :disable="
+            getIsDriver() || currentHeadCount >= propose.headcount_limit
+          "
+        >
+          <q-tooltip v-if="getIsDriver()"> 你是駕駛，無法加入共乘 </q-tooltip>
+          <q-tooltip v-else-if="currentHeadCount >= propose.headcount_limit">
+            人數已滿，無法加入共乘
+          </q-tooltip>
+        </q-btn>
       </q-card-actions>
     </div>
   </q-card>
