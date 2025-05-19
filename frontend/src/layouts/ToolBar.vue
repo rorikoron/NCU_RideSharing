@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { useIdentity } from "@/stores/identity";
 import { useQuasar } from "quasar";
 
 const $q = useQuasar();
+const identity = useIdentity()
 const links = [
   {
     icon: "fa-solid fa-users",
@@ -49,6 +51,10 @@ const links = [
         :model-value="$q.dark.isActive"
         @update:model-value="$q.dark.toggle"
       />
+    </q-item>
+
+    <q-item>
+      <q-btn label="登出" @click = "() => identity.logout()" />
     </q-item>
   </q-list>
 </template>
