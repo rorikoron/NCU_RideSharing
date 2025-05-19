@@ -7,7 +7,7 @@ import ProposeForm from "@/components/ProposeForm.vue";
 import { useIdentity } from "./stores/identity";
 const $q = useQuasar();
 const { refreshProposes } = usePocketbaseStore();
-const { getIsLogin, checkLogin, pb, login, fetchAvatarURL } = useIdentity();
+const { createUser, getIsLogin, checkLogin, pb, login, fetchAvatarURL } = useIdentity();
 
 const drawer = ref(true);
 const createProposeForm = () => {
@@ -27,28 +27,41 @@ const registerUser = async () => {
     $q.notify({ type: "negative", message: "兩次密碼不一致" });
     return;
   }
-  const formData = new FormData();
-  const { registerUser } = usePocketbaseStore();
-
-  Object.entries(formValue.value).forEach(([key, value]) => {
-    formData.append(key, String(value));
-  });
+  const userForm = new FormData();
+  userForm.append("name", formValue.value.name);
+  userForm.append("email", formValue.value.email);
+  userForm.append("password", formValue.value.password);
+  userForm.append("isDriver", String(isDriver.value));
 
   try {
-    await registerUser(formData);
+    await createUser(userForm);
+
+    //store car data
+    if (isDriver.value) {
+      const carForm = new FormData();
+      carForm.append("owner", formValue.value.name);
+      carForm.append("plateNumber", formValue.value.plateNumber);
+      carForm.append("vehicleType", formValue.value.vehicleType);
+
+      await pb.collection("Car").create(carForm);
+    }
+
+    $q.notify({ type: "positive", message: "註冊成功，請登入" });
+    panel.value = "login";
   } catch (error) {
     console.log(error);
+    $q.notify({ type: "negative", message: "註冊失敗，請檢查資訊" });
   }
 };
 
-const formValue = ref<>({
+const formValue = ref<any>({
   name: "",
   email: "",
   password: "",
   comfirmPassword: "",
-  plateNumber: "",       
-  vehicleType: "",       
-  driverLicense: null,
+  isDriver: "",
+  plateNumber: "",
+  vehicalType: ""
 });
 
 onBeforeMount(async () => {
@@ -160,15 +173,10 @@ onBeforeMount(async () => {
             label="車型"
             outlined
           />
-          <q-file
-            v-if="isDriver"
-            v-model="formValue.driverLicense"
-            label="上傳駕照"
-            outlined
-          />
           <q-btn label="註冊" color="secondary" type="submit" />
         </q-form>
       </q-tab-panel>
     </q-tab-panels>
   </div>
 </template>
+
