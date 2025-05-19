@@ -10,12 +10,17 @@ import { useQuasar } from "quasar";
 import OfferForm from "@/components/OfferForm.vue";
 import { useIdentity } from "@/stores/identity";
 import UserSummary from "@/components/UserSummary.vue";
-const { fetchParticipant } = usePocketbaseStore();
+import UserCounter from "@/components/UserCounter.vue";
+
+const { fetchParticipant, createParticipant } = usePocketbaseStore();
 
 const $q = useQuasar();
 const pb = usePocketbaseStore();
 const { getAuthUser, getIsDriver } = useIdentity();
 const { refreshProposes } = pb;
+
+const joiningHeadcount = ref("1"); // 用於儲存使用者想要加入的人數
+const currentHeadCount = ref(0); // 用於顯示當前參與人數
 
 const onAcceptClick = (proposeId: string) => {
   $q.dialog({
@@ -28,33 +33,39 @@ const onAcceptClick = (proposeId: string) => {
     $q.notify({ message: "成功接單", position: "bottom-right" });
   });
 };
+
 const onJoinClick = async (proposeId: string) => {
   let participant = new FormData();
   participant.append("propose", proposeId);
   participant.append("participant", getAuthUser()!.id);
-  participant.append("headcount", "1");
+  participant.append("headcount", joiningHeadcount.value); // 使用使用者選擇的人數
 
   try {
-    await pb.createParticipant(participant);
+    await createParticipant(participant);
     await refreshProposes();
-    await refreshHeadcount();
+    await refreshCurrentHeadcount(); // 更新當前參與人數
   } catch (e) {
     console.error(e);
     $q.notify({ message: "加入共乘失敗", position: "bottom-right" });
   }
 };
-const refreshHeadcount = async () => {
+
+const handleHeadcountChanged = (newHeadcount: string) => {
+  joiningHeadcount.value = newHeadcount;
+};
+
+const refreshCurrentHeadcount = async () => {
   const participants = await fetchParticipant(props.propose.id);
-  totalHeadCount.value = 0;
+  currentHeadCount.value = 0;
   participants.forEach((participant: ImmutableParticipant) => {
-    totalHeadCount.value += participant.headcount;
+    currentHeadCount.value += participant.headcount;
   });
 };
 
-const totalHeadCount = ref(0);
 onMounted(async () => {
-  await refreshHeadcount();
+  await refreshCurrentHeadcount();
 });
+
 const props = withDefaults(
   defineProps<{
     propose: ImmutablePropose;
@@ -69,8 +80,6 @@ const props = withDefaults(
 
 <template>
   <q-card class="fit q-pa-xs col" flat :bordered="bordered">
-    <!-- make as new component (ProposeDetail?)-->
-
     <UserSummary :user="propose.expand?.proponent" />
     <q-separator />
 
@@ -100,9 +109,16 @@ const props = withDefaults(
         square
         class="q-mx-none"
         :ripple="false"
-        :label="`${totalHeadCount} / ${propose.headcount_limit}`"
+        :label="`${currentHeadCount} / ${propose.headcount_limit}`"
       />
-
+      <UserCounter
+        v-model="joiningHeadcount"
+        :min="1"
+        :max="propose.headcount_limit"
+        :headcount-limit="propose.headcount_limit"
+        :current-head-count="currentHeadCount"
+        @headcount-changed="handleHeadcountChanged"
+      />
       <q-chip
         v-if="propose?.appendix"
         size="md"
@@ -116,8 +132,6 @@ const props = withDefaults(
       </q-chip>
     </q-card-section>
 
-    <!-- Actions -->
-
     <div v-if="true">
       <q-separator />
 
@@ -126,7 +140,7 @@ const props = withDefaults(
       </q-card-actions>
 
       <q-card-actions
-        v-if="!getIsDriver() && propose.headcount_limit > totalHeadCount"
+        v-if="!getIsDriver() && propose.headcount_limit > currentHeadCount"
         vertical
       >
         <q-btn
