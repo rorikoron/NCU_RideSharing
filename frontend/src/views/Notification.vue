@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useIdentity } from "@/stores/identity";
 import { useNotification} from "@/stores/notification";
-import type { RecordModel } from "@/stores/pocketbase";
+import type { RecordModel } from "pocketbase";
 import { ref, onMounted } from "vue";
 import NotificationCard from "@/components/NotificationCard.vue";
 

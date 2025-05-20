@@ -1,10 +1,9 @@
 <script setup lang="ts">
-  import { type ImmutableNotification } from '@/stores/notification'
-  import { date } from 'quasar'
+  import { type RecordModel } from 'pocketbase';
   import { computed } from 'vue'
 
   const props = defineProps<{
-    notification:ImmutableNotification;
+    notification:RecordModel;
   }>()
 
   const bannerClass = computed(() => {
