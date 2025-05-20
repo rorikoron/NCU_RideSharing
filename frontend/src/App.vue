@@ -31,7 +31,7 @@ const registerUser = async () => {
   userForm.append("name", formValue.value.name);
   userForm.append("email", formValue.value.email);
   userForm.append("password", formValue.value.password);
-  userForm.append("isDriver", String(isDriver.value));
+  userForm.append("is_driver", String(isDriver.value));
 
   try {
     await createUser(userForm);
@@ -58,10 +58,10 @@ const formValue = ref<any>({
   name: "",
   email: "",
   password: "",
-  comfirmPassword: "",
-  isDriver: "",
+  confirmPassword: "",
+  is_driver: "",
   plateNumber: "",
-  vehicalType: ""
+  vehicleType: ""
 });
 
 onBeforeMount(async () => {
