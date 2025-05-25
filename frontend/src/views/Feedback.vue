@@ -51,7 +51,27 @@ onMounted(async () => {
   <div v-for="propose in proposes" :key="propose.id" class="q-gutter-y-sm">
     <span class="text-h6">
       {{ propose.departure.substring(0, 16).replace(/-/g, "/") }}
-      {{ statusMap[propose.status] }}
+      <span
+        :class="{
+          'text-primary': propose.status==='pending',
+          'text-positive':    propose.status==='accepted',
+          'text-active': propose.status==='completed',
+          'text-negative': propose.status==='cancelled'
+        }"
+        :style = "{
+          border: '1px solid currentColor',
+          borderRadius: '12px',
+          padding: '2px 8px',
+          marginLeft: '8px',
+          backgroundColor: '#f5f5f5',
+          fontSize: '0.85em',
+          fontWeight: '500',
+          display: 'inline-block'
+        }"
+      >
+        {{ statusMap[propose.status] }}
+      </span>
+      
     </span>
     <q-card class="row q-mb-md" flat bordered>
       <ProposeCard :propose="propose" :bordered="false" />
@@ -87,3 +107,5 @@ onMounted(async () => {
     </q-card>
   </div>
 </template>
+
+

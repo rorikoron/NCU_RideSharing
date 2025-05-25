@@ -9,11 +9,14 @@ export const useIdentity = defineStore('identity', () => {
     const isDriver = ref(false)
     const authUser = ref<RecordModel | null>(null);
 
-
     const getIsLogin = () => isLogin.value;
     const getAuthUser = () => authUser.value;
     const getIsDriver = () => isDriver.value;
 
+    const createUser = async (user: FormData) => {
+        const createUser = await pb.collection("users").create(user)
+        return createUser;
+    }
     
     const checkLogin = async () => {
         try {
@@ -59,6 +62,8 @@ export const useIdentity = defineStore('identity', () => {
     const logout = async () => {
         await pb.authStore.clear();
         isLogin.value = false;
+        isDriver.value = false
+        authUser.value = null
     };
 
     const fetchAvatarURL = (id: string | undefined, avatar: string | undefined) => {
@@ -67,5 +72,5 @@ export const useIdentity = defineStore('identity', () => {
         return `${pb.baseURL}/api/files/users/${id}/${avatar}`
     }
 
-    return { pb, getIsLogin, getIsDriver, getAuthUser, checkLogin, login, logout, fetchAvatarURL };
+    return { pb, createUser, getIsLogin, getIsDriver, getAuthUser, checkLogin, login, logout, fetchAvatarURL };
 })
