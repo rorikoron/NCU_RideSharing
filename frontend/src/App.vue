@@ -3,6 +3,7 @@ import { onBeforeMount, ref } from "vue";
 import Toolbar from "./layouts/ToolBar.vue";
 import { useQuasar } from "quasar";
 import { useIdentity } from "./stores/identity";
+import { usePocketbaseStore } from "./stores/pocketbase";
 const $q = useQuasar();
 
 const { refreshProposes } = usePocketbaseStore();
@@ -86,7 +87,9 @@ onBeforeMount(async () => {
       </q-scroll-area>
 
       <q-img class="absolute-top bg-primary" style="height: 150px">
-        <div class="absolute-bottom bg-transparent row items-center q-gutter-sm">
+        <div
+          class="absolute-bottom bg-transparent row items-center q-gutter-sm"
+        >
           <q-avatar size="56px" class="q-mb-sm">
             <img
               :src="

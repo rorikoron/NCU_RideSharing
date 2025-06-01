@@ -91,8 +91,7 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         }
 
         if (filter?.date) {
-            filterQuery.push(`departure >= "${filter.date}T00:00:00"`); 
-            filterQuery.push(`departure <= "${filter.date}T23:59:59"`);
+            filterQuery.push(`departure ~ "${filter.date}   "`); 
         }
 
         if (filter?.time) {
