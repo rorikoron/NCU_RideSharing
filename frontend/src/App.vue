@@ -2,27 +2,20 @@
 import { onBeforeMount, ref } from "vue";
 import Toolbar from "./layouts/ToolBar.vue";
 import { useQuasar } from "quasar";
-import { usePocketbaseStore, type User } from "./stores/pocketbase";
-import ProposeForm from "@/components/ProposeForm.vue";
 import { useIdentity } from "./stores/identity";
 const $q = useQuasar();
+
 const { refreshProposes } = usePocketbaseStore();
 const { createUser, getIsLogin, checkLogin, pb, login, fetchAvatarURL } =
   useIdentity();
 
 const drawer = ref(true);
-const createProposeForm = () => {
-  $q.dialog({ component: ProposeForm }).onOk(() => {
-    refreshProposes();
-    $q.notify({ message: "成功發起提議", position: "bottom-right" });
-  });
-};
 const email = ref("");
 const password = ref("");
-
 const panel = ref("login");
 const isDriver = ref(false);
 
+// user register function
 const registerUser = async () => {
   if (formValue.value.password !== formValue.value.confirmPassword) {
     $q.notify({ type: "negative", message: "兩次密碼不一致" });
@@ -57,6 +50,7 @@ const registerUser = async () => {
   }
 };
 
+// user register form data
 const formValue = ref<any>({
   name: "",
   email: "",
@@ -92,7 +86,7 @@ onBeforeMount(async () => {
       </q-scroll-area>
 
       <q-img class="absolute-top bg-primary" style="height: 150px">
-        <div class="absolute-bottom bg-transparent">
+        <div class="absolute-bottom bg-transparent row items-center q-gutter-sm">
           <q-avatar size="56px" class="q-mb-sm">
             <img
               :src="
@@ -104,18 +98,20 @@ onBeforeMount(async () => {
               alt="avatar"
             />
           </q-avatar>
-          <div class="text-weight-bold">
-            {{ pb.authStore.record?.name }}
+          <div class="column">
+            <div class="text-weight-bold">
+              {{ pb.authStore.record?.name }}
+            </div>
+            <div>{{ pb.authStore.record?.email }}</div>
           </div>
-          <div>{{ pb.authStore.record?.email }}</div>
         </div>
       </q-img>
     </q-drawer>
+
     <q-page-container class="col-grow">
       <q-page padding>
         <router-view />
       </q-page>
-
       <q-page-sticky position="bottom-right">
         <q-btn
           round
