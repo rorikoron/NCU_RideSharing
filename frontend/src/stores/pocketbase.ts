@@ -69,6 +69,47 @@ const pb = new PocketBase('http://localhost:8090')
 export const usePocketbaseStore = defineStore('pocketbase', () => {
     const proposes = ref<ImmutablePropose[]>([])
 
+    // let user search propose in filter bar
+    const filterProposes = async (isDriver?: boolean, filter?: {
+        origin?: string
+        arrival?: string
+        date?: string
+        time?: string
+        }) => {
+        const filterQuery = []
+
+        if (isDriver) {
+            filterQuery.push('is_commision = true')
+        }
+
+        if (filter?.origin) {
+            filterQuery.push(`origin ~ "${filter.origin}"`) 
+        }
+
+        if (filter?.arrival) {
+            filterQuery.push(`arrival ~ "${filter.arrival}"`) 
+        }
+
+        if (filter?.date) {
+            filterQuery.push(`departure >= "${filter.date}T00:00:00"`); 
+            filterQuery.push(`departure <= "${filter.date}T23:59:59"`);
+        }
+
+        if (filter?.time) {
+            // more detail time comparation
+            filterQuery.push(`departure ~ "${filter.time}"`);
+        }
+
+        const finalFilter = filterQuery.join(' && ');
+
+        proposes.value = await pb.collection("Propose").getFullList({
+            sort: '-created',
+            filter: finalFilter,
+            expand: 'proponent'
+        })
+    }
+
+
     const refreshProposes = async (isDriver?: boolean) => {
         proposes.value = await pb.collection("Propose").getFullList({
             sort: 'created',
@@ -128,6 +169,7 @@ export const usePocketbaseStore = defineStore('pocketbase', () => {
         fetchParticipant,
         fetchProposeOffers,
         proposes,
+        filterProposes,
         refreshProposes,
         createPropose,
         createParticipant,
