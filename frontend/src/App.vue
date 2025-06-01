@@ -4,7 +4,10 @@ import Toolbar from "./layouts/ToolBar.vue";
 import { useQuasar } from "quasar";
 import { useIdentity } from "./stores/identity";
 const $q = useQuasar();
-const { createUser, getIsLogin, checkLogin, pb, login, fetchAvatarURL } = useIdentity();
+
+const { refreshProposes } = usePocketbaseStore();
+const { createUser, getIsLogin, checkLogin, pb, login, fetchAvatarURL } =
+  useIdentity();
 
 const drawer = ref(true);
 const email = ref("");
@@ -14,14 +17,16 @@ const isDriver = ref(false);
 
 // user register function
 const registerUser = async () => {
-  if (formValue.value.password !== formValue.value.comfirmPassword) {
+  if (formValue.value.password !== formValue.value.confirmPassword) {
     $q.notify({ type: "negative", message: "兩次密碼不一致" });
     return;
   }
+  console.log(formValue.value);
   const userForm = new FormData();
   userForm.append("name", formValue.value.name);
   userForm.append("email", formValue.value.email);
   userForm.append("password", formValue.value.password);
+  userForm.append("passwordConfirm", formValue.value.confirmPassword);
   userForm.append("is_driver", String(isDriver.value));
 
   try {
@@ -53,7 +58,7 @@ const formValue = ref<any>({
   confirmPassword: "",
   is_driver: "",
   plateNumber: "",
-  vehicleType: ""
+  vehicleType: "",
 });
 
 onBeforeMount(async () => {
@@ -107,6 +112,18 @@ onBeforeMount(async () => {
       <q-page padding>
         <router-view />
       </q-page>
+      <q-page-sticky position="bottom-right">
+        <q-btn
+          round
+          glossy
+          class="shadow-10"
+          v-ripple
+          icon="fa-solid fa-plus"
+          size="md"
+          @click="createProposeForm"
+        />
+        <q-tooltip class="bg-white text-black">新增共乘提議</q-tooltip>
+      </q-page-sticky>
     </q-page-container>
   </q-layout>
 
@@ -124,9 +141,17 @@ onBeforeMount(async () => {
 
     <q-tab-panels v-model="panel" animated>
       <q-tab-panel name="login">
-        <q-form @submit.prevent="() => login(email, password)" class="q-gutter-md q-mt-md">
+        <q-form
+          @submit.prevent="() => login(email, password)"
+          class="q-gutter-md q-mt-md"
+        >
           <q-input v-model="email" label="Email" type="email" outlined />
-          <q-input v-model="password" label="Password" type="password" outlined />
+          <q-input
+            v-model="password"
+            label="Password"
+            type="password"
+            outlined
+          />
           <q-btn label="登入" color="primary" type="submit" />
         </q-form>
       </q-tab-panel>
@@ -140,9 +165,24 @@ onBeforeMount(async () => {
             color="primary"
           />
           <q-input v-model="formValue.name" label="名稱" outlined />
-          <q-input v-model="formValue.email" label="Email" type="email" outlined />
-          <q-input v-model="formValue.password" label="密碼" type="password" outlined />
-          <q-input v-model="formValue.comfirmPassword" label="確認密碼" type="password" outlined />
+          <q-input
+            v-model="formValue.email"
+            label="Email"
+            type="email"
+            outlined
+          />
+          <q-input
+            v-model="formValue.password"
+            label="密碼"
+            type="password"
+            outlined
+          />
+          <q-input
+            v-model="formValue.confirmPassword"
+            label="確認密碼"
+            type="password"
+            outlined
+          />
           <q-input
             v-if="isDriver"
             v-model="formValue.plateNumber"
