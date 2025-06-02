@@ -3,12 +3,8 @@ import { onBeforeMount, ref } from "vue";
 import Toolbar from "./layouts/ToolBar.vue";
 import { useQuasar } from "quasar";
 import { useIdentity } from "./stores/identity";
-import { usePocketbaseStore } from "./stores/pocketbase";
 const $q = useQuasar();
-
-const { refreshProposes } = usePocketbaseStore();
-const { createUser, getIsLogin, checkLogin, pb, login, fetchAvatarURL } =
-  useIdentity();
+const { createUser, getIsLogin, checkLogin, pb, login, fetchAvatarURL } = useIdentity();
 
 const drawer = ref(true);
 const email = ref("");
@@ -115,18 +111,6 @@ onBeforeMount(async () => {
       <q-page padding>
         <router-view />
       </q-page>
-      <q-page-sticky position="bottom-right">
-        <q-btn
-          round
-          glossy
-          class="shadow-10"
-          v-ripple
-          icon="fa-solid fa-plus"
-          size="md"
-          @click="createProposeForm"
-        />
-        <q-tooltip class="bg-white text-black">新增共乘提議</q-tooltip>
-      </q-page-sticky>
     </q-page-container>
   </q-layout>
 
