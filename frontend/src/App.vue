@@ -122,8 +122,8 @@ onBeforeMount(async () => {
         專為中央大學打造的共乘媒合系統，讓搭車更方便、更安全、更即時。
       </p>
       <div class="row justify-center q-gutter-sm q-mt-md">
-        <q-btn color="white" text-color="orange" label="立即註冊" to="/register" unelevated rounded />
-        <q-btn outline color="white" label="已有帳號？登入" to="/login" rounded />
+        <q-btn color="white" text-color="orange" label="立即註冊" unelevated rounded href="#login-and-register" />
+        <q-btn outline color="white" label="已有帳號？登入" to="/login" rounded href="#login-and-register" />
       </div>
     </div>
 
@@ -194,7 +194,7 @@ onBeforeMount(async () => {
       <q-tab name="register" label="註冊" />
     </q-tabs>
 
-    <q-tab-panels v-model="panel" animated class="bg-white q-pa-xl rounded-borders shadow-1 q-mt-sm">
+    <q-tab-panels v-model="panel" animated class="bg-white q-pa-xl rounded-borders shadow-1 q-mt-sm" id="login-and-register">
       <!-- login -->
       <q-tab-panel name="login">
         <h3 class="text-h6 text-primary q-mb-md">登入帳號</h3>
