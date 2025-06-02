@@ -23,6 +23,7 @@ const formPropose = (proposeValue: MutablePropose) => {
   });
   return propose;
 };
+
 const formPariticipant = (
   proposeId: string,
   proponent: string,
@@ -64,6 +65,7 @@ const proposeValue = ref<MutablePropose>({
   origin: "",
   arrival: "",
   headcount_limit: 0,
+  status: "pending",
   is_commission: false,
   departure: todayStr,
   appendix: "",
