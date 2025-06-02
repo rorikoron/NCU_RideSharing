@@ -67,7 +67,7 @@ export const useIdentity = defineStore('identity', () => {
     };
 
     const fetchAvatarURL = (id: string | undefined, avatar: string | undefined) => {
-        const defaultAvatar = './vue.svg';
+        const defaultAvatar = '/src/assets/default_icon.webp';
         if(!id || !avatar) return defaultAvatar
         return `${pb.baseURL}/api/files/users/${id}/${avatar}`
     }

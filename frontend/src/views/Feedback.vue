@@ -53,12 +53,12 @@ onMounted(async () => {
       {{ propose.departure.substring(0, 16).replace(/-/g, "/") }}
       <span
         :class="{
-          'text-primary': propose.status==='pending',
-          'text-positive':    propose.status==='accepted',
-          'text-active': propose.status==='completed',
-          'text-negative': propose.status==='cancelled'
+          'text-primary': propose.status === 'pending',
+          'text-positive': propose.status === 'accepted',
+          'text-active': propose.status === 'completed',
+          'text-negative': propose.status === 'cancelled',
         }"
-        :style = "{
+        :style="{
           border: '1px solid currentColor',
           borderRadius: '12px',
           padding: '2px 8px',
@@ -66,22 +66,20 @@ onMounted(async () => {
           backgroundColor: '#f5f5f5',
           fontSize: '0.85em',
           fontWeight: '500',
-          display: 'inline-block'
+          display: 'inline-block',
         }"
       >
         {{ statusMap[propose.status] }}
       </span>
-      
     </span>
     <q-card class="row q-mb-md" flat bordered>
       <ProposeCard :propose="propose" :bordered="false" />
       <q-separator vertical inset />
-      <q-list class="col-9 q-pa-sm">
+      <q-list class="col-9 q-pa-sm" separator>
         <q-item
-          v-for="(offer, i) in offers.filter((o) => propose.id === o.propose)"
+          v-for="offer in offers.filter((o) => propose.id === o.propose)"
           dense
         >
-          <q-separator v-if="i != 0" inset />
           <q-item-section class="col-3" avatar>
             <UserSummary :user="offer.expand?.driver" />
           </q-item-section>
@@ -107,5 +105,3 @@ onMounted(async () => {
     </q-card>
   </div>
 </template>
-
-

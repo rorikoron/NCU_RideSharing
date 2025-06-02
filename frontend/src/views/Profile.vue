@@ -1,48 +1,47 @@
 <script setup>
-import { ref, reactive, computed, onBeforeMount } from "vue"
-import { useQuasar } from "quasar"
-import { useIdentity } from "@/stores/identity"
-import { toRaw } from "vue"
+import { ref, reactive, computed, onBeforeMount } from "vue";
+import { useQuasar } from "quasar";
+import { useIdentity } from "@/stores/identity";
+import { toRaw } from "vue";
 
-const $q = useQuasar()
-const { getAuthUser, fetchAvatarURL, pb, checkLogin } = useIdentity()
+const $q = useQuasar();
+const { getAuthUser, fetchAvatarURL, pb, checkLogin } = useIdentity();
 
-const currentTab = ref("general")
-const defaultAvatar =
-  "https://imgs.gotrip.hk/wp-content/uploads/2017/11/nhv4dxh3MJN7gxp/blank-profile-picture-973460_960_720_2583405935a02dfab699c6.png"
+const currentTab = ref("general");
+const defaultAvatar = "/assets/default_icon.png"; // 預設頭像圖片路徑
 
-const authUser = getAuthUser()
+const authUser = getAuthUser();
 
 const avatarPreview = ref(
   fetchAvatarURL(authUser?.id, authUser?.avatar) || defaultAvatar
-)
+);
 
 const general = reactive({
   name: authUser?.name || "",
   email: authUser?.email || "",
   avatar: authUser?.avatar || "",
-})
+});
 
-const removeAvatarFlag = ref(false)
-let originalGeneral = { ...toRaw(general) }
+const removeAvatarFlag = ref(false);
+let originalGeneral = { ...toRaw(general) };
 
 const generalChanged = computed(() => {
   return (
     JSON.stringify(general) !== JSON.stringify(originalGeneral) ||
     removeAvatarFlag.value
-  )
-})
+  );
+});
 
 function changeAvatar(event) {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (file) {
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onload = (e) => {
-      avatarPreview.value = e.target.result
-      general.avatar = e.target.result // base 64
-      removeAvatarFlag.value = false
-    }
-    reader.readAsDataURL(file)
+      avatarPreview.value = e.target.result;
+      general.avatar = e.target.result; // base 64
+      removeAvatarFlag.value = false;
+    };
+    reader.readAsDataURL(file);
   }
 }
 
@@ -53,57 +52,67 @@ function removeAvatar() {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    avatarPreview.value = defaultAvatar
-    general.avatar = ""
-    removeAvatarFlag.value = true
-  })
+    avatarPreview.value = defaultAvatar;
+    general.avatar = "";
+    removeAvatarFlag.value = true;
+  });
 }
 
 // save user info
 async function saveGeneralUserData() {
   try {
-    const form = new FormData()
-    form.append("name", general.name)
-    form.append("email", general.email)
+    const form = new FormData();
+    form.append("name", general.name);
+    form.append("email", general.email);
 
     if (removeAvatarFlag.value) {
-      form.append("avatar", "")
+      form.append("avatar", "");
     } else if (general.avatar && general.avatar.startsWith("data:")) {
-      const blob = await (await fetch(general.avatar)).blob()
-      const file = new File([blob], "avatar.png", { type: blob.type })
-      form.append("avatar", file)
+      const blob = await (await fetch(general.avatar)).blob();
+      const file = new File([blob], "avatar.png", { type: blob.type });
+      form.append("avatar", file);
     }
 
-    const updated = await pb.collection("users").update(authUser?.id, form)
-    originalGeneral = { ...toRaw(general) }
-    removeAvatarFlag.value = false
-    $q.notify({ type: "positive", message: "一般資料已更新" })
+    const updated = await pb.collection("users").update(authUser?.id, form);
+    originalGeneral = { ...toRaw(general) };
+    removeAvatarFlag.value = false;
+    $q.notify({ type: "positive", message: "一般資料已更新" });
   } catch (err) {
-    $q.notify({ type: "negative", message: "儲存失敗：" + err.message })
+    $q.notify({ type: "negative", message: "儲存失敗：" + err.message });
   }
 }
 
 onBeforeMount(async () => {
-  await checkLogin()
-})
+  await checkLogin();
+});
 </script>
 
 <template>
   <div class="profile-page">
     <div class="profile-header">
       <q-avatar size="80px">
-        <img :src="avatarPreview" />
+        <img :src="avatarPreview" alt="icon" />
       </q-avatar>
       <div class="profile-info">
-        <div class="profile-name">{{ general.name || '未命名使用者' }}</div>
+        <div class="profile-name">{{ general.name || "未命名使用者" }}</div>
         <div class="profile-email">{{ general.email }}</div>
       </div>
     </div>
 
     <div class="form-section">
       <div class="avatar-edit">
-        <q-btn label="選擇新頭像" @click="$refs.fileInput.click()" color="primary" outline />
-        <input ref="fileInput" type="file" class="hidden" @change="changeAvatar" />
+        <q-btn
+          label="選擇新頭像"
+          @click="$refs.fileInput.click()"
+          color="primary"
+          outline
+        />
+        <input
+          ref="fileInput"
+          type="file"
+          class="hidden"
+          @change="changeAvatar"
+        />
         <q-btn
           v-if="avatarPreview !== defaultAvatar"
           label="移除頭像"
@@ -114,7 +123,13 @@ onBeforeMount(async () => {
       </div>
 
       <q-input v-model="general.name" label="姓名" outlined dense />
-      <q-input v-model="general.email" label="Email" outlined dense type="email" />
+      <q-input
+        v-model="general.email"
+        label="Email"
+        outlined
+        dense
+        type="email"
+      />
 
       <q-btn
         v-if="generalChanged"

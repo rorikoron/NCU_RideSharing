@@ -4,6 +4,7 @@ import { usePocketbaseStore, type MutablePropose } from "../stores/pocketbase";
 import { ref } from "vue";
 import DateTimePicker from "./DateTimePicker.vue";
 import LocationSelector from "./LocationSelector.vue";
+import { useIdentity } from "@/stores/identity";
 defineEmits([
   // REQUIRED; need to specify some events that your
   // component will emit through useDialogPluginComponent()
@@ -11,7 +12,7 @@ defineEmits([
 ]);
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
-
+const { getAuthUser } = useIdentity();
 const formPropose = (proposeValue: MutablePropose) => {
   const propose = new FormData();
   Object.entries(proposeValue).forEach(([key, value]) => {
@@ -61,7 +62,7 @@ const todayStr = date_timezone_taiwan
 
 const proposeValue = ref<MutablePropose>({
   // ATTENTION: here should implement the ID of user
-  proponent: "748lod0038buwzd",
+  proponent: getAuthUser()?.id ?? "",
   origin: "",
   arrival: "",
   headcount_limit: 0,
