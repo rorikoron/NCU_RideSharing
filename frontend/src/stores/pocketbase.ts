@@ -21,13 +21,13 @@ export interface MutablePropose{
     arrival: string,
     departure: string,
     headcount_limit: number,
+    status: ProposeStatus,
     is_commission: boolean,
     appendix?: string
 }
 export interface ImmutablePropose extends MutablePropose{
     id: string,
     offer: string,
-    status: ProposeStatus
     created: string,
     updated: string,
     expand:{
