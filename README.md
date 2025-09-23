@@ -1,13 +1,15 @@
 # NCU_RideSharing
 辺鄙な場所にある大学なため、弊校ではライドシェアが盛んにおこなわれています。しかし、現行の方式では主にLineのオープンチャットで募集、勧誘が行われており、沢山の問題を抱えています。
 そこで、専用のウェブサイトを作成し、これらの問題に対して様々なアプローチを試みました。（最終的には時間や金銭的な面の都合上、8割ほどの完成度でローカルでホストするにとどまりました。）
-![image](https://hackmd.io/_uploads/HJ-0-_ghge.png)
+<img width="230" height="421" alt="image" src="https://github.com/user-attachments/assets/1443ab2d-8ddc-440f-bd7f-15e91706110c" />
+
 
 ## 使い方
 `/frontend` にて `npm i` で依存ファイルをインストールしてください。
 `run.bat` を起動するとフロントエンドとデータベースが立ち上がります。
 フロント側のUIは以下の通りで、ユーザ側は自由に新しく提起、または募集中のライドシェア案に参加でき、ドライバ側は提起されたライドシェア案に対して値段を提案できます。（所謂逆マッチング方式で、オークションの様な方式です。）
-![image](https://hackmd.io/_uploads/SJ1ikYgneg.png)
+<img width="1881" height="881" alt="image" src="https://github.com/user-attachments/assets/8708f84a-c0d6-4f58-b563-8de5d6cf2b6b" />
+
 
 
 ## 技術選定
@@ -25,7 +27,8 @@ Github ActionsではチームメンバーがIssueに対しプルリク時に自�
 - 募集状態が分かりにくい（募集中/満員/中止/マッチ済み）
     - 参加中人数、上限人数を明記することでドライバのキャパを超えなくする。
     - 中止/マッチした場合ドライバと参加者に通知を送り、募集一覧から削除することでユーザを惑わせないよう設計
-    - ![image](https://hackmd.io/_uploads/r1CegYl3ex.png)
+    - <img width="220" height="122" alt="image" src="https://github.com/user-attachments/assets/d0a49c9d-87a9-4cc4-a364-6e1d8e441251" />
+
 
 - 問題のあるユーザが分かりにくい
     - アカウント登録を義務化
@@ -34,7 +37,8 @@ Github ActionsではチームメンバーがIssueに対しプルリク時に自�
     - 募集をかける時に大々的に表示するように。
 - ライドシェアの履歴が分かりづらい
     - 一覧を設けることに。（時間が足りず実装できなかったが、動的ルーティングし、他者の履歴も見ることができるようにすることも可能）
-    - ![image](https://hackmd.io/_uploads/ryCkxFxnex.png)
+    - <img width="1555" height="529" alt="image" src="https://github.com/user-attachments/assets/9a6f953c-2bd3-4603-a020-7b2635048294" />
+
 
 - 同じ行先、日時の人が見つけづらい
     - フィルターを設け、容易に検索可能に
